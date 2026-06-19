@@ -10,6 +10,37 @@ const PlaylistList = ({ tasks, setTasks }) => {
     },
   };
 
+  const handleEditPlaylist = async (playlist) => {
+    const title = prompt('Playlist title', playlist.title);
+    const description = prompt('Description', playlist.description || '');
+    const category = prompt(
+      'Category: general, study, music, fitness, programming',
+      playlist.category || 'general'
+    );
+
+    if (!title) return;
+
+    try {
+      const response = await axiosInstance.put(
+        `/api/playlists/${playlist._id}`,
+        {
+          title,
+          description,
+          category,
+        },
+        authHeader
+      );
+
+      setTasks(
+        tasks.map((item) =>
+          item._id === playlist._id ? response.data : item
+        )
+      );
+    } catch {
+      alert('Failed to update playlist');
+    }
+  };
+
   const handleDeletePlaylist = async (id) => {
     try {
       await axiosInstance.delete(`/api/playlists/${id}`, authHeader);
@@ -68,10 +99,21 @@ const PlaylistList = ({ tasks, setTasks }) => {
           <p className="mb-2">{playlist.description}</p>
 
           <p className="text-sm text-gray-600">
+            Category: {playlist.category || 'general'}
+          </p>
+
+          <p className="text-sm text-gray-600">
             Videos: {playlist.videos?.length || 0}
           </p>
 
           <div className="mt-3">
+            <button
+              onClick={() => handleEditPlaylist(playlist)}
+              className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+            >
+              Edit Playlist
+            </button>
+
             <button
               onClick={() => handleAddVideo(playlist._id)}
               className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
