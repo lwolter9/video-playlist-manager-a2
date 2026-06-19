@@ -5,6 +5,8 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const isAdmin = user?.role === 'admin';
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -26,6 +28,16 @@ const Navbar = () => {
             <Link to="/profile" className="mr-4">
               Profile
             </Link>
+
+            <Link to="/notifications" className="mr-4">
+              Notifications
+            </Link>
+
+            {isAdmin && (
+              <Link to="/admin" className="mr-4">
+                Admin
+              </Link>
+            )}
 
             <button
               onClick={handleLogout}
