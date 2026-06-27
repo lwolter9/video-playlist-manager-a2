@@ -6,23 +6,44 @@ import Profile from './pages/Profile';
 import Playlists from './pages/Playlists';
 import Admin from './pages/Admin';
 import { useAuth } from './context/AuthContext';
+import Notifications from './pages/Notifications';
 
 function App() {
   const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   return (
     <Router>
       <Navbar />
+
       <Routes>
         <Route
           path="/"
           element={<Navigate to={user ? '/playlists' : '/login'} />}
         />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/playlists" element={<Playlists />} />
-        <Route path="/admin" element={<Admin />} />
+
+        <Route
+          path="/profile"
+          element={user ? <Profile /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/playlists"
+          element={user ? <Playlists /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/admin"
+          element={user && isAdmin ? (<Admin />) : (<Navigate to={user ? '/playlists' : '/login'} />)}
+        />
+
+        <Route
+          path="/notifications"
+          element={user ? <Notifications /> : <Navigate to="/login" />}
+        />
       </Routes>
     </Router>
   );
