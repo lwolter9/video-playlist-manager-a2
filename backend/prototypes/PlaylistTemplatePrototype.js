@@ -1,6 +1,3 @@
-86% of storage used … If you run out, you can't create, edit, and upload files. Get 30 GB for ₹15 for 3 months ₹59.
-1
-100%
 class PlaylistTemplatePrototype {
   constructor(title, description, category, videos = []) {
     this.title = title;
