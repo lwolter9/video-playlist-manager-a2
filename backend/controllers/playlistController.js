@@ -1,16 +1,30 @@
 const PlaylistService = require('../services/PlaylistService');
+const { buildValidationChain } = require('../chains/RequestValidationChain');
 
 const handleError = (error, res) => {
   const statusCode = error.statusCode || 500;
   res.status(statusCode).json({ message: error.message });
 };
 
+const validateRequest = (req, res) => {
+  const validationChain = buildValidationChain();
+  const validationError = validationChain.handle(req);
+
+  if (validationError) {
+    res.status(400).json({ message: validationError });
+    return false;
+  }
+
+  return true;
+};
+
 const getPlaylists = async (req, res) => {
   try {
     const playlists = await PlaylistService.getUserPlaylists(
-  req.user.id,
-  req.query
+      req.user.id,
+      req.query
     );
+
     res.json(playlists);
   } catch (error) {
     handleError(error, res);
@@ -18,6 +32,8 @@ const getPlaylists = async (req, res) => {
 };
 
 const createPlaylist = async (req, res) => {
+  if (!validateRequest(req, res)) return;
+
   try {
     const playlist = await PlaylistService.createPlaylist(req.user.id, req.body);
     res.status(201).json(playlist);
@@ -67,6 +83,8 @@ const deletePlaylist = async (req, res) => {
 };
 
 const addVideoToPlaylist = async (req, res) => {
+  if (!validateRequest(req, res)) return;
+
   try {
     const updatedPlaylist = await PlaylistService.addVideoToPlaylist(
       req.user.id,
