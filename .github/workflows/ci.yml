@@ -4,23 +4,23 @@ on:
   push:
     branches:
       - main
+      - develop
       - feature/**
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   build-and-test:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version:
-          - 24.x
+          - 20.x
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -35,11 +35,11 @@ jobs:
       - name: Install backend dependencies
         run: npm install --prefix backend
 
+      - name: Run backend unit tests
+        run: npm test --prefix backend
+
       - name: Install frontend dependencies
         run: npm install --prefix frontend
 
-      - name: Backend validation
-        run: echo "Backend configured"
-
-      - name: Frontend build
+      - name: Build frontend
         run: CI=false npm run build --prefix frontend
